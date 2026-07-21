@@ -7,7 +7,9 @@ const bodyParser = require("body-parser");
 const envPath = path.join(__dirname, ".env");
 const envResult = dotenv.config({ path: envPath });
 if (envResult.error) {
-  console.warn("Could not load .env file:", envResult.error.message);
+  if (envResult.error.code !== "ENOENT") {
+    console.warn("Could not load .env file:", envResult.error.message);
+  }
 } else {
   console.log("Loaded .env:", envResult.parsed);
 }
