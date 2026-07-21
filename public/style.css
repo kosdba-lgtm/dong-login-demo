@@ -65,23 +65,41 @@ input {
   font-size: 1rem;
 }
 
-.bottom-tabs {
-  margin-top: 28px;
+.bottom-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 32px;
 }
 
-button[type="submit"] {
-  padding: 14px 16px;
+.action-button {
+  min-width: 170px;
+  padding: 16px 24px;
   border: none;
-  border-radius: 16px;
-  background: #2563eb;
-  color: white;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #1f2937;
   font-weight: 700;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  margin-top: 10px;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 12px 28px rgba(59, 130, 246, 0.12);
 }
 
-button[type="submit"]:hover {
-  background: #1d4ed8;
+.action-button:hover {
+  transform: translateY(-1px);
+  background: #dde7ff;
+}
+
+.action-button.active {
+  background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.22);
+}
+
+.action-button:not(.active) {
+  border: 1px solid rgba(100, 116, 139, 0.16);
 }
 
 .message {
