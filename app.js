@@ -85,13 +85,41 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
-app.get("/healthz", (req, res) => {
-  res.send("OK");
+app.get("/healthz", async (req, res) => {
+  if (!pool) {
+    return res.status(500).send("DB_NOT_CONFIGURED");
+  }
+
+  try {
+    await pool.query("SELECT 1");
+    res.send("OK");
+  } catch (error) {
+    console.error("Health check DB error:", error);
+    res.status(500).send("DB_CONNECTION_ERROR");
+  }
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+const startServer = async () => {
   if (!databaseUrl) {
     console.warn("Warning: DATABASE_URL is not set. Set it in Railway or with an environment variable.");
   }
-});
+
+  if (pool) {
+    pool.on("error", (err) => {
+      console.error("Postgres pool error:", err);
+    });
+
+    try {
+      await pool.query("SELECT 1");
+      console.log("Database connected successfully.");
+    } catch (error) {
+      console.error("Database startup connection error:", error);
+    }
+  }
+
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+};
+
+startServer();
