@@ -9,7 +9,7 @@
   <body>
     <main class="container">
       <h1>Railway Login Demo</h1>
-      <p>GitHub + Railway에 배포하고, Railway Postgres의 <code>users</code> 테이블로 로그인합니다.</p>
+      <p>간단한 로그인/회원가입 페이지입니다.</p>
 
       <div class="tabs">
         <button id="loginTab" class="active">로그인</button>
@@ -23,7 +23,7 @@
         </label>
         <label>
           이메일
-          <input id="emailInput" type="email" name="email" placeholder="test@example.com" required />
+          <input id="emailInput" type="text" name="email" placeholder="test@example.com" />
         </label>
         <label>
           비밀번호
@@ -33,25 +33,6 @@
       </form>
 
       <div id="message" class="message"></div>
-
-      <section class="help">
-        <h2>Railway 세팅</h2>
-        <ol>
-          <li>Railway 프로젝트 생성</li>
-          <li>Postgres 플러그인 추가</li>
-          <li>DATABASE_URL 환경 변수 확인</li>
-          <li>아래 SQL로 테이블 생성</li>
-        </ol>
-        <pre>CREATE TABLE users (
-  id serial PRIMARY KEY,
-  email text UNIQUE NOT NULL,
-  password text NOT NULL,
-  name text NOT NULL
-);
-
-INSERT INTO users (email, password, name)
-VALUES ('test@example.com', 'password123', 'Test User');</pre>
-      </section>
     </main>
 
     <script src="/script.js"></script>
