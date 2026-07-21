@@ -1,5 +1,5 @@
-const loginTab = document.getElementById("loginTab");
-const signupTab = document.getElementById("signupTab");
+const loginButton = document.getElementById("loginButton");
+const signupButton = document.getElementById("signupButton");
 const authForm = document.getElementById("authForm");
 const nameInput = document.getElementById("nameInput");
 const emailInput = document.getElementById("emailInput");
@@ -10,8 +10,8 @@ let mode = "login";
 
 const setMode = (newMode) => {
   mode = newMode;
-  loginTab.classList.toggle("active", mode === "login");
-  signupTab.classList.toggle("active", mode === "signup");
+  loginButton.classList.toggle("active", mode === "login");
+  signupButton.classList.toggle("active", mode === "signup");
   nameInput.parentElement.style.display = mode === "signup" ? "grid" : "none";
   messageEl.textContent = "";
   messageEl.className = "message";
@@ -53,8 +53,21 @@ const submitAuth = async () => {
   }
 };
 
-loginTab.addEventListener("click", () => setMode("login"));
-signupTab.addEventListener("click", () => setMode("signup"));
+loginButton.addEventListener("click", () => {
+  if (mode !== "login") {
+    setMode("login");
+    return;
+  }
+  submitAuth();
+});
+
+signupButton.addEventListener("click", () => {
+  if (mode !== "signup") {
+    setMode("signup");
+    return;
+  }
+  submitAuth();
+});
 
 authForm.addEventListener("submit", (event) => {
   event.preventDefault();
