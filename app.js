@@ -3,6 +3,9 @@ const dotenv = require("dotenv");
 const express = require("express");
 const { Pool } = require("pg");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcryptjs");
+
+const BCRYPT_SALT_ROUNDS = 10;
 
 const envPath = path.join(__dirname, ".env");
 const envResult = dotenv.config({ path: envPath });
@@ -42,15 +45,22 @@ app.post("/api/login", async (req, res) => {
   }
 
   try {
-    const query = "SELECT id, email, name FROM users WHERE email = $1 AND password = $2 LIMIT 1";
-    const values = [email.trim().toLowerCase(), password];
+    const query = "SELECT id, email, name, password FROM users WHERE email = $1 LIMIT 1";
+    const values = [email.trim().toLowerCase()];
     const result = await pool.query(query, values);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ success: false, message: "Invalid email or password." });
     }
 
-    return res.json({ success: true, user: result.rows[0] });
+    const user = result.rows[0];
+    const passwordMatches = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatches) {
+      return res.status(401).json({ success: false, message: "Invalid email or password." });
+    }
+
+    return res.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ success: false, message: "Database error." });
@@ -69,8 +79,9 @@ app.post("/api/signup", async (req, res) => {
   }
 
   try {
+    const passwordHash = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
     const insertQuery = "INSERT INTO users (email, password, name) VALUES ($1, $2, $3) RETURNING id, email, name";
-    const values = [email.trim().toLowerCase(), password, name.trim()];
+    const values = [email.trim().toLowerCase(), passwordHash, name.trim()];
     const result = await pool.query(insertQuery, values);
 
     return res.json({ success: true, user: result.rows[0] });
