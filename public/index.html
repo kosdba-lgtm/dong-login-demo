@@ -7,29 +7,38 @@
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <main class="container">
-      <form id="authForm">
-        <label>
-          이름
-          <input id="nameInput" type="text" name="name" placeholder="홍길동" />
-        </label>
-        <label>
-          아이디
-          <input id="emailInput" type="text" name="email" placeholder="아이디를 입력하세요" />
-        </label>
-        <label>
-          비밀번호
-          <input id="passwordInput" type="password" name="password" placeholder="password" required />
-        </label>
-      </form>
+    <div class="phone">
+      <main class="container">
+        <div class="app-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="10" width="16" height="10" rx="2" />
+            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+          </svg>
+        </div>
 
-      <div id="message" class="message"></div>
+        <form id="authForm">
+          <label>
+            이름
+            <input id="nameInput" type="text" name="name" placeholder="홍길동" />
+          </label>
+          <label>
+            아이디
+            <input id="emailInput" type="text" name="email" placeholder="아이디를 입력하세요" />
+          </label>
+          <label>
+            비밀번호
+            <input id="passwordInput" type="password" name="password" placeholder="password" required />
+          </label>
+        </form>
 
-      <div class="bottom-actions">
-        <button id="loginButton" class="action-button active">로그인</button>
-        <button id="signupButton" class="action-button">회원가입</button>
-      </div>
-    </main>
+        <div id="message" class="message"></div>
+
+        <div class="bottom-actions">
+          <button id="loginButton" class="action-button active">로그인</button>
+          <button id="signupButton" class="action-button">회원가입</button>
+        </div>
+      </main>
+    </div>
 
     <script src="/script.js"></script>
   </body>
