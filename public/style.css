@@ -6,20 +6,20 @@
 
 :root {
   --primary: #5e6ad2;
-  --primary-hover: #828fff;
+  --primary-hover: #4b57c9;
   --primary-focus: #5e69d1;
-  --ink: #f7f8f8;
-  --ink-muted: #d0d6e0;
-  --ink-subtle: #8a8f98;
-  --ink-tertiary: #62666d;
-  --canvas: #010102;
-  --surface-1: #0f1011;
-  --surface-2: #141516;
-  --surface-3: #18191a;
-  --hairline: #23252a;
-  --hairline-strong: #34343a;
-  --semantic-success: #27a644;
-  --semantic-error: #e5484d;
+  --ink: #1a1b1e;
+  --ink-muted: #3c4149;
+  --ink-subtle: #6b7280;
+  --ink-tertiary: #9297a0;
+  --canvas: #f4f5f7;
+  --surface-1: #ffffff;
+  --surface-2: #f1f2f4;
+  --surface-3: #e9eaed;
+  --hairline: #e5e7eb;
+  --hairline-strong: #d1d5db;
+  --semantic-success: #1a8a3b;
+  --semantic-error: #d1373d;
 }
 
 body {
@@ -41,7 +41,7 @@ body {
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   border-radius: 24px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -62,7 +62,7 @@ body {
   margin: 0 auto 8px;
   border-radius: 8px;
   background: var(--primary);
-  color: var(--ink);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
