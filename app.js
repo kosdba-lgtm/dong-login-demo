@@ -60,6 +60,8 @@ app.post("/api/login", async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid email or password." });
     }
 
+    await pool.query("UPDATE users SET last_login_at = NOW() WHERE id = $1", [user.id]);
+
     return res.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
   } catch (error) {
     console.error("Login error:", error);
