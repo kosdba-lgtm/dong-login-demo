@@ -1,50 +1,90 @@
-*,
+﻿*,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
 :root {
-  --primary: #5e6ad2;
-  --primary-hover: #4b57c9;
-  --primary-focus: #5e69d1;
-  --ink: #1a1b1e;
-  --ink-muted: #3c4149;
-  --ink-subtle: #6b7280;
-  --ink-tertiary: #9297a0;
-  --canvas: #f4f5f7;
-  --surface-1: #ffffff;
-  --surface-2: #f1f2f4;
-  --surface-3: #e9eaed;
-  --hairline: #e5e7eb;
-  --hairline-strong: #d1d5db;
-  --semantic-success: #1a8a3b;
-  --semantic-error: #d1373d;
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-hover: rgba(255, 255, 255, 0.06);
+  --text-primary: #f5f5f7;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-tertiary: rgba(255, 255, 255, 0.35);
+  --accent-start: #6366f1;
+  --accent-end: #8b5cf6;
+  --accent-glow: rgba(99, 102, 241, 0.3);
+  --success: #34d399;
+  --error: #f87171;
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --input-focus: rgba(99, 102, 241, 0.5);
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
 }
 
 body {
   margin: 0;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  background: var(--canvas);
-  color: var(--ink);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(59, 130, 246, 0.04) 0%, transparent 50%);
+  animation: gradientShift 15s ease-in-out infinite alternate;
+}
+
+@keyframes gradientShift {
+  0% { transform: translate(0%, 0%) rotate(0deg); }
+  100% { transform: translate(-2%, -2%) rotate(3deg); }
 }
 
 .phone {
   width: 100%;
-  max-width: 390px;
-  height: min(844px, calc(100vh - 48px));
-  background: var(--surface-1);
-  border: 1px solid var(--hairline);
-  border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
-  overflow: hidden;
+  max-width: 400px;
+  min-height: 600px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 28px;
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .container {
@@ -52,20 +92,46 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 44px 24px 24px;
+  padding: 48px 32px 32px;
   overflow-y: auto;
 }
 
 .app-icon {
-  width: 44px;
-  height: 44px;
-  margin: 0 auto 8px;
-  border-radius: 8px;
-  background: var(--primary);
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 12px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 12px 32px var(--accent-glow);
+  animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { box-shadow: 0 12px 32px var(--accent-glow); }
+  50% { box-shadow: 0 12px 48px rgba(99, 102, 241, 0.45); }
+}
+
+.app-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin: 16px 0 4px;
+  background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.app-subtitle {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  margin: 0 0 32px;
 }
 
 @media (max-width: 480px), (max-height: 700px) {
@@ -76,58 +142,59 @@ body {
   .phone {
     max-width: none;
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     border-radius: 0;
     border: none;
     box-shadow: none;
+    background: var(--bg-primary);
+    backdrop-filter: none;
   }
-}
-
-h1 {
-  margin-top: 0;
-  font-size: 2rem;
-}
-
-p {
-  color: var(--ink-subtle);
 }
 
 form {
   display: grid;
-  gap: 20px;
-  margin-top: 28px;
+  gap: 16px;
+  margin-top: 8px;
 }
 
 label {
   display: grid;
   gap: 8px;
-  font-size: 14px;
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--ink-muted);
-  letter-spacing: -0.05px;
+  color: var(--text-secondary);
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
 }
 
 input {
   width: 100%;
-  padding: 12px 12px;
-  border: 1px solid var(--hairline);
-  border-radius: 8px;
-  background: var(--surface-2);
-  color: var(--ink);
-  font-size: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 1rem;
   font-family: inherit;
-  letter-spacing: -0.05px;
-  min-height: 44px;
+  letter-spacing: -0.02em;
+  min-height: 48px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 input::placeholder {
-  color: var(--ink-tertiary);
+  color: var(--text-tertiary);
 }
 
 input:focus {
-  outline: 2px solid rgba(94, 105, 209, 0.5);
-  outline-offset: 1px;
-  border-color: var(--hairline-strong);
+  outline: none;
+  border-color: var(--input-focus);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+input:hover:not(:focus) {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--glass-hover);
 }
 
 .bottom-actions {
@@ -142,58 +209,60 @@ input:focus {
   flex: 1;
   min-width: 0;
   max-width: 200px;
-  min-height: 44px;
+  min-height: 48px;
   padding: 12px 14px;
-  border: 1px solid var(--hairline);
-  border-radius: 8px;
-  background: var(--surface-1);
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0;
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  background: var(--input-bg);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .action-button:hover {
-  background: var(--surface-3);
+  background: var(--glass-hover);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
 }
 
 .action-button.active {
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
   color: #ffffff;
-  border-color: var(--primary);
+  border-color: transparent;
+  box-shadow: 0 8px 24px var(--accent-glow);
 }
 
 .action-button.active:hover {
-  background: var(--primary-hover);
-  border-color: var(--primary-hover);
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.45);
+  transform: translateY(-1px);
+}
+
+.action-button.active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
 }
 
 .message {
   margin-top: 16px;
   min-height: 1.5rem;
-  font-size: 14px;
-  color: var(--semantic-error);
+  font-size: 0.8125rem;
+  color: var(--error);
+  text-align: center;
+  animation: fadeIn 0.3s ease;
 }
 
 .message.success {
-  color: var(--semantic-success);
+  color: var(--success);
 }
 
-.help {
-  margin-top: 24px;
-  background: var(--surface-2);
-  border-radius: 8px;
-  padding: 16px;
-  border: 1px solid var(--hairline);
-}
-
-.help pre {
-  white-space: pre-wrap;
-  background: var(--surface-3);
-  padding: 12px;
-  border-radius: 8px;
-  overflow-x: auto;
-  color: var(--ink-muted);
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
