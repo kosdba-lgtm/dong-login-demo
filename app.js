@@ -1,4 +1,4 @@
-const path = require("path");
+﻿const path = require("path");
 const dotenv = require("dotenv");
 const express = require("express");
 const { Pool } = require("pg");
@@ -33,6 +33,40 @@ const pool = databaseUrl
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
+// Ensure the login_history table exists. Safe to run on every boot.
+const ensureSchema = async () => {
+  if (!pool) return;
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS login_history (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      email VARCHAR(255) NOT NULL,
+      success BOOLEAN NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+  await pool.query(
+    "CREATE INDEX IF NOT EXISTS idx_login_history_email ON login_history(email)"
+  );
+  await pool.query(
+    "CREATE INDEX IF NOT EXISTS idx_login_history_created ON login_history(created_at DESC)"
+  );
+  console.log("login_history schema is ready.");
+};
+
+// Best-effort history write; never let it break the auth flow.
+const recordLogin = async ({ userId, email, success }) => {
+  if (!pool) return;
+  try {
+    await pool.query(
+      "INSERT INTO login_history (user_id, email, success) VALUES ($1, $2, $3)",
+      [userId || null, (email || "").trim().toLowerCase(), !!success]
+    );
+  } catch (error) {
+    console.error("Failed to record login history:", error);
+  }
+};
+
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body || {};
 
@@ -44,12 +78,15 @@ app.post("/api/login", async (req, res) => {
     return res.status(500).json({ success: false, message: "DATABASE_URL is not configured." });
   }
 
+  const normalizedEmail = email.trim().toLowerCase();
+
   try {
     const query = "SELECT id, email, name, password FROM users WHERE email = $1 LIMIT 1";
-    const values = [email.trim().toLowerCase()];
+    const values = [normalizedEmail];
     const result = await pool.query(query, values);
 
     if (result.rows.length === 0) {
+      await recordLogin({ userId: null, email: normalizedEmail, success: false });
       return res.status(401).json({ success: false, message: "Invalid email or password." });
     }
 
@@ -57,11 +94,11 @@ app.post("/api/login", async (req, res) => {
     const passwordMatches = await bcrypt.compare(password, user.password);
 
     if (!passwordMatches) {
+      await recordLogin({ userId: user.id, email: normalizedEmail, success: false });
       return res.status(401).json({ success: false, message: "Invalid email or password." });
     }
 
-    await pool.query("UPDATE users SET last_login_at = NOW() WHERE id = $1", [user.id]);
-
+    await recordLogin({ userId: user.id, email: normalizedEmail, success: true });
     return res.json({ success: true, user: { id: user.id, email: user.email, name: user.name } });
   } catch (error) {
     console.error("Login error:", error);
@@ -98,6 +135,33 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
+// Recent login history for a given email (most recent first).
+app.get("/api/history", async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ success: false, message: "email query parameter is required." });
+  }
+
+  if (!pool) {
+    return res.status(500).json({ success: false, message: "DATABASE_URL is not configured." });
+  }
+
+  const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
+
+  try {
+    const result = await pool.query(
+      "SELECT id, email, success, created_at FROM login_history WHERE email = $1 ORDER BY created_at DESC LIMIT $2",
+      [email.trim().toLowerCase(), limit]
+    );
+
+    return res.json({ success: true, history: result.rows });
+  } catch (error) {
+    console.error("History error:", error);
+    return res.status(500).json({ success: false, message: "Database error." });
+  }
+});
+
 app.get("/healthz", async (req, res) => {
   if (!pool) {
     return res.status(500).send("DB_NOT_CONFIGURED");
@@ -125,6 +189,7 @@ const startServer = async () => {
     try {
       await pool.query("SELECT 1");
       console.log("Database connected successfully.");
+      await ensureSchema();
     } catch (error) {
       console.error("Database startup connection error:", error);
     }
